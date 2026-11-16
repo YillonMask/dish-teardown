@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>宫保鸡丁 · 照片拆解</title>
+<style>
+:root{--accent:#e8552b;--ink:#2b2622;--muted:#8a8178;--bg:#f3efe8;--card:rgba(255,255,255,.9)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);
+ font-family:"Noto Sans CJK SC","Noto Sans SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif}
+#app{position:fixed;inset:0;display:flex}
+#stage{position:relative;flex:1;min-width:0;overflow:hidden;background:radial-gradient(ellipse at 50% 40%,#fff9f2,#e8e0d4 70%)}
+#viewport{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;perspective:1200px}
+#stack{position:relative;width:min(92%,720px);height:min(78%,720px);transform-style:preserve-3d;transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+.card{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+ transition:transform .75s cubic-bezier(.2,.8,.2,1),opacity .5s,filter .5s; border-radius:18px; overflow:hidden;
+ box-shadow:0 18px 50px rgba(40,30,20,.18); background:#1a1512}
+.card img{width:100%;height:100%;object-fit:contain;background:#f3efe8;display:block}
+.card .badge{position:absolute;left:14px;top:14px;background:var(--card);border-left:3px solid var(--ink);
+ padding:6px 10px;border-radius:8px;font-size:14px;font-weight:700;box-shadow:0 2px 10px rgba(0,0,0,.08);opacity:0;transition:opacity .3s}
+.card .badge small{display:block;font-weight:500;color:var(--muted);font-size:12px;margin-top:2px}
+.card.show-badge .badge{opacity:1}
+.card.dim{opacity:.18;filter:blur(2px) grayscale(.3);pointer-events:none}
+.card.focus{z-index:5; box-shadow:0 28px 70px rgba(232,85,43,.28)}
+#title{position:absolute;left:18px;top:14px;pointer-events:none;z-index:2}
+#title h1{font-size:22px;font-weight:800;letter-spacing:1px}
+#title p{font-size:13px;color:var(--muted);margin-top:2px}
+#hint{position:absolute;left:18px;top:74px;font-size:12px;color:var(--muted);z-index:2}
+#bar{position:absolute;left:0;right:0;bottom:0;padding:10px 12px 14px;display:flex;gap:7px;flex-wrap:wrap;justify-content:center;z-index:3}
+#bar button{font:inherit;font-size:14px;border:1px solid rgba(0,0,0,.12);background:var(--card);color:var(--ink);
+ padding:7px 12px;border-radius:999px;cursor:pointer;white-space:nowrap;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+#bar button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+#bar button.special{font-weight:700}
+#panel{width:300px;flex:none;background:#fbf9f5;border-left:1px solid rgba(0,0,0,.07);padding:22px 20px;overflow:auto;z-index:2}
+#panel .tag{display:inline-block;font-size:12px;color:#fff;background:var(--accent);border-radius:4px;padding:1px 7px;margin-bottom:6px}
+#panel h2{font-size:24px;font-weight:800;margin-bottom:4px}
+#panel .note{color:var(--muted);font-size:13px;margin-bottom:16px}
+#panel h3{font-size:12px;letter-spacing:2px;color:var(--muted);margin:14px 0 4px;font-weight:600}
+#panel p{font-size:14px;line-height:1.65}
+#panel .amt{font-size:18px;font-weight:700;color:var(--accent)}
+#panel .approx{font-size:11px;color:var(--muted)}
+#tourflag{position:absolute;right:14px;top:14px;font-size:12px;color:var(--muted);background:var(--card);padding:3px 9px;border-radius:999px;opacity:0;transition:opacity .3s;z-index:3}
+#credit{position:absolute;left:18px;bottom:64px;font-size:11px;color:var(--muted);z-index:2;max-width:55%}
+body.rec #tourflag{transition:none}
+@media (max-width:760px),(orientation:portrait){
+ #app{flex-direction:column}
+ #panel{width:auto;height:34%;border-left:none;border-top:1px solid rgba(0,0,0,.07);padding:12px 16px}
+ #panel h2{font-size:19px}
+ #bar{flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;-webkit-overflow-scrolling:touch}
+ #title h1{font-size:17px}#hint,#credit{display:none}
+}
+</style>
+</head>
+<body>
+<div id="app">
+ <div id="stage">
+  <div id="viewport"><div id="stack"></div></div>
+  <div id="title"><h1>宫保鸡丁 · 照片拆解</h1><p>用真实菜品照片拆开八道部分</p></div>
+  <div id="hint">点按钮查看每样食材 · 照片来自真实菜品</div>
+  <div id="tourflag">▶ 自动导览中</div>
+  <div id="credit">照片来源：Wikimedia Commons（宫保鸡丁实拍）</div>
+  <div id="bar"></div>
+ </div>
+ <aside id="panel"></aside>
+</div>
+<script>
+const META = /*META*/;
+const ASSETS = /*ASSETS*/;
+const parts = META.parts;
+const stack = document.getElementById('stack');
+const bar = document.getElementById('bar');
+const panel = document.getElementById('panel');
+const tourflag = document.getElementById('tourflag');
+const buttons = {};
+const cards = {};
+
+// Assembled card
+const assembled = document.createElement('div');
+assembled.className = 'card';
+assembled.dataset.id = 'assembled';
+assembled.innerHTML = '<img alt="assembled" src="'+ASSETS.hero+'"><div class="badge">整盘宫保鸡丁<small>真实照片</small></div>';
+stack.appendChild(assembled);
+cards.assembled = assembled;
+
+parts.forEach((p,i) => {
+  const el = document.createElement('div');
+  el.className = 'card';
+  el.dataset.id = p.id;
+  const src = ASSETS[p.id] || ASSETS.hero;
+  el.innerHTML = '<img alt="'+p.name+'" src="'+src+'"><div class="badge">'+p.name+'<small>'+p.note+'</small></div>';
+  stack.appendChild(el);
+  cards[p.id] = el;
+});
+
+function mkBtn(id, label, cls){
+  const b = document.createElement('button');
+  b.textContent = label; if (cls) b.className = cls;
+  b.addEventListener('click', () => { stopTour(); act(id); });
+  bar.appendChild(b); buttons[id]=b; return b;
+}
+mkBtn('all','整体','special');
+parts.forEach(p => mkBtn(p.id, p.btn));
+mkBtn('explode','全部拆开','special');
+mkBtn('tour','▶ 自动导览','special');
+
+let state = {mode:'all', sel:null};
+let tourTimer = null;
+
+function setOn(id){
+  Object.values(buttons).forEach(b => b.classList.remove('on'));
+  if (buttons[id]) buttons[id].classList.add('on');
+}
+
+function layout(){
+  const N = parts.length;
+  const mode = state.mode;
+  // reset
+  Object.values(cards).forEach(c => { c.classList.remove('dim','focus','show-badge'); c.style.transform=''; c.style.opacity=''; c.style.zIndex='';});
+
+  if (mode === 'all'){
+    cards.assembled.style.transform = 'translate3d(0,0,0) scale(1)';
+    cards.assembled.style.zIndex = 2;
+    cards.assembled.classList.add('show-badge');
+    parts.forEach(p => { cards[p.id].style.opacity='0'; cards[p.id].style.transform='translate3d(0,40px,0) scale(.92)'; });
+    renderPanel();
+    return;
+  }
+  if (mode === 'focus'){
+    const id = state.sel;
+    cards.assembled.classList.add('dim');
+    cards.assembled.style.transform = 'translate3d(-18%,0,-80px) scale(.78)';
+    parts.forEach(p => {
+      const c = cards[p.id];
+      if (p.id === id){
+        c.classList.add('focus','show-badge');
+        c.style.transform = 'translate3d(8%,0,40px) scale(1.05)';
+        c.style.zIndex = 5;
+        c.style.opacity = '1';
+      } else {
+        c.classList.add('dim');
+        c.style.transform = 'translate3d(0,30px,-40px) scale(.85)';
+        c.style.opacity = '0';
+      }
+    });
+    renderPanel();
+    return;
+  }
+  if (mode === 'explode'){
+    cards.assembled.classList.add('dim');
+    cards.assembled.style.transform = 'translate3d(0,-120%,-100px) scale(.55)';
+    cards.assembled.style.opacity = '.35';
+    const cols = 4, gapX = 24, gapY = 22;
+    parts.forEach((p,i) => {
+      const c = cards[p.id];
+      const col = i % cols, row = Math.floor(i/cols);
+      const x = (col - (cols-1)/2) * (100/cols + 4);
+      const y = (row - 0.5) * 52;
+      c.classList.add('show-badge');
+      c.style.opacity = '1';
+      c.style.zIndex = 3+i;
+      c.style.transform = `translate3d(${x}%, ${y}%, 0) scale(0.42)`;
+    });
+    renderPanel();
+  }
+}
+
+function renderPanel(){
+  if (state.mode === 'focus'){
+    const p = parts.find(x => x.id === state.sel);
+    panel.innerHTML = '<span class="tag">真实照片</span><h2>'+p.name+'</h2><div class="note">'+p.note+'</div>'+
+      '<h3>在这道菜里的作用</h3><p>'+p.role+'</p>'+
+      '<h3>每份大约用量</h3><p class="amt">'+p.amount+'</p><p class="approx">* 粗略估计，各家做法不同</p>'+
+      (p.fact?'<h3>小知识</h3><p>'+p.fact+'</p>':'');
+  } else if (state.mode === 'explode'){
+    panel.innerHTML = '<span class="tag">爆炸视图</span><h2>'+META.title+'</h2><div class="note">'+META.subtitle+'</div><p>'+META.intro+'</p><h3>八个部分</h3><ul>'+
+      parts.map(p=>'<li><i style="background:'+p.swatch+'"></i>'+p.name+'</li>').join('')+'</ul>';
+  } else {
+    panel.innerHTML = '<span class="tag">整体</span><h2>'+META.title+'</h2><div class="note">'+META.subtitle+'</div><p>'+META.intro+'</p><h3>包含</h3><ul>'+
+      parts.map(p=>'<li><i style="background:'+p.swatch+'"></i>'+p.name+' · '+p.note+'</li>').join('')+'</ul>';
+  }
+}
+
+function act(id){
+  if (id==='all'){ state={mode:'all',sel:null}; setOn('all'); }
+  else if (id==='explode'){ state={mode:'explode',sel:null}; setOn('explode'); }
+  else if (id==='tour'){ startTour(); return; }
+  else { state={mode:'focus',sel:id}; setOn(id); }
+  layout();
+}
+
+function stopTour(){ if (tourTimer){ clearTimeout(tourTimer); tourTimer=null; } tourflag.style.opacity=0; }
+function startTour(){
+  stopTour(); setOn('tour'); tourflag.style.opacity=1;
+  const steps = ['all', ...parts.map(p=>p.id), 'explode', 'all'];
+  let i=0;
+  const tick = () => {
+    const s = steps[i++];
+    if (!s){ stopTour(); setOn('all'); return; }
+    if (s==='all'){ state={mode:'all',sel:null}; }
+    else if (s==='explode'){ state={mode:'explode',sel:null}; }
+    else { state={mode:'focus',sel:s}; }
+    layout();
+    tourTimer = setTimeout(tick, s==='all'||s==='explode' ? 2200 : 1800);
+  };
+  tick();
+}
+
+// auto-start subtle assembled
+act('all');
+
+// record mode helper
+const Q = new URLSearchParams(location.search);
+if (Q.has('record')){
+  document.body.classList.add('rec');
+  setTimeout(() => startTour(), 600);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+node_modules/
+frames_*/
+tmp_*/
+*.zip
+.DS_Store
+Thumbs.db
+playwright-report/
+test-results/

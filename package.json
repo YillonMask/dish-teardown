@@ -1,0 +1,24 @@
+{
+  "name": "dish-teardown",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Interactive 3D / photo teardowns of Chinese dishes (兰州牛肉面, 宫保鸡丁)",
+  "type": "commonjs",
+  "scripts": {
+    "build:noodle": "node src/build.js src/dishes/dish_noodle.js demo/lanzhou-beef-noodle/index.html",
+    "build:kungpao": "node src/build.js src/dishes/dish_kungpao.js demo/kung-pao-chicken/index.html",
+    "build:kungpao-v1": "node src/build.js src/dishes/dish_kungpao_v1.js /tmp/kungpao-v1.html",
+    "build:photo": "node photo-version/build.js",
+    "build": "npm run build:noodle && npm run build:kungpao && npm run build:photo",
+    "record:noodle": "node src/record.js demo/lanzhou-beef-noodle noodle_teardown video",
+    "record:kungpao": "node src/record.js demo/kung-pao-chicken kungpao_teardown video",
+    "record:noodle-stills": "node src/record.js demo/lanzhou-beef-noodle noodle_teardown stills",
+    "record:kungpao-stills": "node src/record.js demo/kung-pao-chicken kungpao_teardown stills chicken",
+    "record:photo": "node photo-version/record_photo.js"
+  },
+  "author": "Xinrui Yi",
+  "dependencies": {
+    "playwright": "^1.64.1",
+    "three": "^0.160.0"
+  }
+}

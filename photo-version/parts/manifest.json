@@ -1,0 +1,231 @@
+{
+  "chicken": [
+    {
+      "file": "chicken_00.png",
+      "w": 160,
+      "h": 150
+    },
+    {
+      "file": "chicken_01.png",
+      "w": 160,
+      "h": 160
+    },
+    {
+      "file": "chicken_02.png",
+      "w": 150,
+      "h": 150
+    },
+    {
+      "file": "chicken_03.png",
+      "w": 150,
+      "h": 150
+    },
+    {
+      "file": "chicken_04.png",
+      "w": 150,
+      "h": 140
+    },
+    {
+      "file": "chicken_05.png",
+      "w": 160,
+      "h": 150
+    },
+    {
+      "file": "chicken_06.png",
+      "w": 150,
+      "h": 140
+    },
+    {
+      "file": "chicken_07.png",
+      "w": 160,
+      "h": 140
+    },
+    {
+      "file": "chicken_08.png",
+      "w": 150,
+      "h": 150
+    },
+    {
+      "file": "chicken_09.png",
+      "w": 170,
+      "h": 170
+    },
+    {
+      "file": "chicken_10.png",
+      "w": 170,
+      "h": 170
+    },
+    {
+      "file": "chicken_11.png",
+      "w": 170,
+      "h": 170
+    }
+  ],
+  "peanut": [
+    {
+      "file": "peanut_00.png",
+      "w": 100,
+      "h": 100
+    },
+    {
+      "file": "peanut_01.png",
+      "w": 100,
+      "h": 100
+    },
+    {
+      "file": "peanut_02.png",
+      "w": 100,
+      "h": 100
+    },
+    {
+      "file": "peanut_03.png",
+      "w": 100,
+      "h": 100
+    },
+    {
+      "file": "peanut_04.png",
+      "w": 110,
+      "h": 110
+    },
+    {
+      "file": "peanut_05.png",
+      "w": 100,
+      "h": 100
+    },
+    {
+      "file": "peanut_06.png",
+      "w": 100,
+      "h": 100
+    },
+    {
+      "file": "peanut_07.png",
+      "w": 77,
+      "h": 100
+    },
+    {
+      "file": "peanut_08.png",
+      "w": 92,
+      "h": 70
+    }
+  ],
+  "chili": [
+    {
+      "file": "chili_00.png",
+      "w": 180,
+      "h": 160
+    },
+    {
+      "file": "chili_01.png",
+      "w": 164,
+      "h": 180
+    },
+    {
+      "file": "chili_02.png",
+      "w": 170,
+      "h": 125
+    },
+    {
+      "file": "chili_03.png",
+      "w": 180,
+      "h": 200
+    },
+    {
+      "file": "chili_04.png",
+      "w": 200,
+      "h": 190
+    },
+    {
+      "file": "chili_05.png",
+      "w": 190,
+      "h": 200
+    },
+    {
+      "file": "chili_06.png",
+      "w": 190,
+      "h": 200
+    }
+  ],
+  "scallion": [
+    {
+      "file": "scallion_00.png",
+      "w": 160,
+      "h": 140
+    },
+    {
+      "file": "scallion_01.png",
+      "w": 170,
+      "h": 160
+    },
+    {
+      "file": "scallion_02.png",
+      "w": 170,
+      "h": 150
+    },
+    {
+      "file": "scallion_03.png",
+      "w": 170,
+      "h": 150
+    },
+    {
+      "file": "scallion_04.png",
+      "w": 170,
+      "h": 104
+    },
+    {
+      "file": "scallion_05.png",
+      "w": 147,
+      "h": 59
+    }
+  ],
+  "pepper": [
+    {
+      "file": "pepper_00.png",
+      "w": 80,
+      "h": 80
+    },
+    {
+      "file": "pepper_01.png",
+      "w": 80,
+      "h": 80
+    },
+    {
+      "file": "pepper_02.png",
+      "w": 80,
+      "h": 80
+    }
+  ],
+  "gingergarlic": [
+    {
+      "file": "gingergarlic_00.png",
+      "w": 80,
+      "h": 80
+    },
+    {
+      "file": "gingergarlic_01.png",
+      "w": 80,
+      "h": 80
+    },
+    {
+      "file": "gingergarlic_02.png",
+      "w": 80,
+      "h": 80
+    }
+  ],
+  "sauce": [
+    {
+      "file": "sauce_00.png",
+      "w": 220,
+      "h": 190
+    },
+    {
+      "file": "sauce_01.png",
+      "w": 270,
+      "h": 190
+    },
+    {
+      "file": "sauce_02.png",
+      "w": 270,
+      "h": 200
+    }
+  ]
+}
